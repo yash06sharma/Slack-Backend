@@ -42,4 +42,33 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function communities() {
+        return $this->hasMany(Community::class, 'created_by');
+    }
+
+    public function communityMembers() {
+        return $this->hasMany(CommunityMember::class, 'user_id');
+    }
+
+    public function channels() {
+        return $this->hasMany(Channel::class, 'created_by');
+    }
+
+    public function channelMembers() {
+        return $this->hasMany(ChannelMember::class, 'user_id');
+    }
+
+    public function chats() {
+        return $this->hasMany(Chat::class, 'created_by');
+    }
+
+    public function chatAttachments() {
+        return $this->hasMany(ChatAttachment::class, 'created_by');
+    }
+
+      public function chatThread() {
+        return $this->hasMany(ChatThread::class, 'created_by');
+    }
+
 }
