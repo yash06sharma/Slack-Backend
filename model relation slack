@@ -1,0 +1,244 @@
+	
+	--------------User Model:-----------
+	
+class User extends Model {
+
+    public function communities() {
+        return $this->hasMany(Community::class, 'created_by');
+    }
+
+    public function communityMembers() {
+        return $this->hasMany(CommunityMember::class, 'user_id');
+    }
+
+    public function channels() {
+        return $this->hasMany(Channel::class, 'created_by');
+    }
+
+    public function channelMembers() {
+        return $this->hasMany(ChannelMember::class, 'user_id');
+    }
+
+    public function chats() {
+        return $this->hasMany(Chat::class, 'created_by');
+    }
+
+    public function chatAttachments() {
+        return $this->hasMany(ChatAttachment::class, 'created_by');
+    }
+
+      public function chatThread() {
+        return $this->hasMany(ChatThread::class, 'created_by');
+    }
+}
+
+		//---------------Community Model-------------
+
+class Community extends Model {
+  
+
+    public function members() {
+        return $this->hasMany(CommunityMember::class, 'comunity_id');
+    }
+
+    public function channels() {
+        return $this->hasMany(Channel::class, 'comunity_id');
+    }
+  
+      public function creator() {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+}
+
+--------Community Member Model-----------
+
+class CommunityMember extends Model {
+
+
+    public function community() {
+        return $this->belongsTo(Community::class, 'comunity_id');
+    }
+     public function Users() {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+}
+
+--------------Channel Model-------------
+class Channel extends Model {
+
+    public function community() {
+        return $this->belongsTo(Community::class, 'comunity_id');
+    }
+
+    public function creator() {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function members() {
+        return $this->hasMany(ChannelMember::class, 'channel_id');
+    }
+
+    public function chats() {
+        return $this->hasMany(Chat::class, 'channel_id');
+    }
+
+}
+Class ChannelMember extends Model {
+
+    public function user() {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function channel() {
+        return $this->belongsTo(Channel::class, 'channel_id');
+    }
+
+}
+
+
+---------Chat Model-------------
+class Chat extends Model {
+
+    public function channel() {
+        return $this->belongsTo(Channel::class, 'channel_id');
+    }
+
+    public function sender() {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+    
+
+    public function attachments() {
+        return $this->hasMany(ChatAttachment::class, 'chat_id');
+    }
+
+    public function threads() {
+        return $this->hasMany(ChatThread::class, 'chat_id');
+    }
+
+   public function receiver() {
+        return $this->belongsTo(User::class, 'receiver_id');
+    }
+}
+
+
+-----------Chat Attachment--------------
+
+class ChatAttachment extends Model {
+
+    public function chat() {
+        return $this->belongsTo(Chat::class, 'chat_id');
+    }
+
+}
+
+Chat Thread -----------------
+
+class ChatThread extends Model {
+
+    public function chat() {
+        return $this->belongsTo(Chat::class, 'chat_id');
+    }
+
+}
+
+Migration Tables:------------
+Users Table:- 
+  Schema::create('users', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->string('password');
+            $table->timestamps();
+            
+            
+            
+Community Table:-------------
+
+ Schema::create('communities', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->text('description');
+            $table->unsignedBigInteger('created_by');
+            $table->foreignId('created_by')->reference('id')->on(users);
+            $table->timestamps();
+            
+            
+Community Member Table:-------------
+
+Schema::create('community_members', function (Blueprint $table) {
+            $table->id();
+            $table->string('role');
+            $table->string('status');
+            $table->unsignedBigInteger('user_id');
+            $table->foreignId('user_id')->reference('id')->on(users);
+            $table->unsignedBigInteger('communitie_id');
+            $table->foreignId('communitie_id')->reference('id')->on(communities);
+            $table->timestamps();
+          
+ 
+channels Table:-----------
+            
+Schema::create('channel', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->unsignedBigInteger('created_by');
+            $table->foreignId('created_by')->reference('id')->on(users);
+            $table->unsignedBigInteger('communitie_id');
+            $table->foreignId('communitie_id')->reference('id')->on(communities);
+            $table->timestamps();
+            
+channels Member Table:-----------
+            
+Schema::create('channel_Members', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('user_id');
+            $table->foreignId('user_id')->reference('id')->on(users);
+            $table->unsignedBigInteger('channel_id');
+            $table->foreignId('channel_id')->reference('id')->on(channels);
+            $table->timestamps();
+            
+
+chat Table:-----------
+            
+Schema::create('chats', function (Blueprint $table) {
+            $table->id();
+            $table->string('message');
+            $table->unsignedBigInteger('created_by');
+            $table->foreignId('created_by')->reference('id')->on(users);
+            $table->unsignedBigInteger('receiver_id');
+            $table->foreignId('receiver_id')->reference('id')->on(users);
+            $table->unsignedBigInteger('channel_id');
+            $table->foreignId('channel_id')->reference('id')->on(channels);
+            $table->timestamps();
+            
+chat Attachments Table:-----------
+            
+Schema::create('chat_attachments', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('path');
+            $table->string('type');
+            $table->unsignedBigInteger('chat_id');
+            $table->foreignId('chat_id')->reference('id')->on(chats);
+            $table->unsignedBigInteger('created_by');
+            $table->foreignId('created_by')->reference('id')->on(users);
+            $table->unsignedBigInteger('chat_thread_id');
+            $table->foreignId('chat_thread_id')->reference('id')->on(chat_threads);
+            $table->timestamps();  
+            
+chat Thread Table:-----------
+            
+Schema::create('chat_threads', function (Blueprint $table) {
+            $table->id();
+            $table->string('message');
+            $table->unsignedBigInteger('chat_id');
+            $table->foreignId('chat_id')->reference('id')->on(chats);
+            $table->unsignedBigInteger('created_by');
+            $table->foreignId('created_by')->reference('id')->on(users);
+            $table->timestamps();        
+            
+            
+

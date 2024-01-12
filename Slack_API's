@@ -1,0 +1,343 @@
+Slack API's Architecture :-
+
+Lauching api:- Screen 01
+			------Landing Page-----------
+
+Register:- Screen 02
+		POST http://localhost:9002/api/auth/register
+
+		{
+		    "name": "Testing",
+		    "email": "testing@gmail.com",
+		    "password": "Password"
+		}
+		
+Login:- Screen 03
+
+POST http://localhost:9002/api/auth/login
+
+		{
+		    "email": "testing@gmail.com",
+		    "password": "Password"
+		    
+		}
+		
+LogOut Profile:--
+POST http://localhost:9002/api/auth/logout
+		
+Create-Community Display Page:- Screen 4
+
+GET Community Detail & Channels & Members All data.
+
+A- Community Detail:-  
+GET http://localhost:9002/api/user/communities?/{comm_ID}/
+	
+[
+	{
+		'id'
+		"name": 
+		"description": 
+		"created_at": 
+		"created_by": {
+			"id":
+			"name":
+		},
+		"members": [
+			{
+				'id':
+				'role': 
+				'status': 
+				'created_at': 
+				'user': {
+					'id': 
+					'name':
+				},
+				'comunity': {
+					'id':
+					'name':
+				}
+			}
+		],
+		'channels': [
+			{
+				'name':
+				'created_at': 
+				'created_by': {
+					'id': 
+					'name':
+				},
+				'comunity': {
+					'id':
+					'name':
+				},
+				'members': [
+					{
+						'id':
+						'channel': {
+							"id:
+							'name':
+						},
+						'user': {
+							'id': 
+							'name':
+						},
+						'created_at': 
+					}
+				],
+				'chats': [
+					{
+						id
+						'comunity': {
+							id
+							name
+						},
+						'channel': {
+							'id',
+							'name'
+						},
+						'message'
+						'created_by': {
+							'id'
+							'name'
+						},
+						'created_at',
+						'attachments': [
+							{
+								'id'
+								'name'
+								'path'
+								'type'
+								'created_at'
+							}
+						],
+						'threds': [
+							{
+								'id',
+								'message'
+								'created_at',
+								'created_by': {
+									id
+									name
+								},
+								'attachments': [
+									{
+										'id'
+										'name'
+										'path'
+										'type'
+										'created_at'
+									}
+								]
+							}
+						]
+					}	
+				]
+			}
+		],
+		'chats': [
+			{
+				id
+				'comunity': {
+					id
+					name
+				},
+				'receiver': {
+					'id',
+					'name'
+				},
+				'message'
+				'created_by': {
+					'id'
+					'name'
+				},
+				'created_at',
+				'attachments': [
+					{
+						'id'
+						'name'
+						'path'
+						'type'
+						'created_at'
+					}
+				],
+				'threds': [
+					{
+						'id',
+						'message'
+						'created_at',
+						'created_by': {
+							id
+							name
+						},
+						'attachments': [
+							{
+								'id'
+								'name'
+								'path'
+								'type'
+								'created_at'
+							}
+						]
+					}
+				]
+			}
+		]
+	},
+	...
+]
+
+
+Create Community(With Model) :- Screen 5
+POST http://localhost:9002/api/user/community
+
+		{
+		    "Name": "yash",
+		    "description": "Handle office work"
+		}
+		
+Dashboard :- Screen 6th
+	-----------Community--------------
+B- Update Community:- 
+PUT http://localhost:9002/api/user/community/{ID}
+	
+		{
+		    "Name": "yash",
+		    "description": "Handle office work"
+		}
+C- Delete Community:- 
+DELETE http://localhost:9002/api/user/community/{ID}
+		
+
+	---------Direct Messege/Chat-User & Thread----------
+GET  http://localhost:9002/api/community/{comm_ID}/chat/{ "Receiver_ID"//"Channel_ID"}
+		Response{
+			
+		    "Message" : "The text messege",
+		    "Receiver_ID" : "1",   //  "Channel_ID" : "1",
+		    "attachments" : [
+		    			"File" : "",
+		    		    ]
+		    "Thread" [
+		    			.......
+		    ]
+		}
+	
+
+POST http://localhost:9002/api/community/{comm_ID}/chat
+	
+		{
+		    "Message" : "The text messege",
+		    "Receiver_ID" : "1",   //  "Channel_ID" : "1",
+		    "attachments" : [
+		    			"File" : "",
+		    		    ]
+		}
+		
+POST http://localhost:9002/api/community/{comm_ID}/chat/thread
+		{
+		    "Message" : "The text messege",
+		    "Chat_ID" : "1",
+		    "Receiver_ID" : "1",   //  "Channel_ID" : "1",
+		    "attachments" : [
+		    			"File" : "",
+		    		    ]
+		}
+	
+Add Member :- Screen 7
+-----------Add Member For Community--------------
+
+
+C- Community Search Member 
+GET http://localhost:9002/api/user/community/{comm_ID}/member
+	Payload: {
+		"Email" : "yash@gmail.com"
+	}
+	Response:{
+		   "ID": "1",
+		   "Name": "Yash",
+		   "Email" : "yash@gmail.com",
+		}
+ 
+POST http://localhost:9002/api/user/community/{commID}/channel/{ch_ID}/member
+	
+		{	
+		    "User_ID": "1",
+		    channle_ID: "1"
+		    "Role": "manager/community_user/guest_user",
+		}
+	
+		
+D- Community Update Single Member:-  
+PUT http://localhost:9002/api/user/community/{commID}/member/{ID}
+	
+		{
+		    "User_ID": "1",
+		    "Role": "manager/community_user/guest_user",
+		}
+
+E- Community Delete Single Member:-  
+DELETE http://localhost:9002/api/user/community/{comm_ID}/member/{ID}
+	
+		
+After Add Member(Invite User) Email would be sent to user.
+Click on the link By User :- (Open a URL)
+	
+
+
+PUT  http://localhost:9002/api/user/community/{comm_ID}/member/{ID}
+	
+	//---Data with URL "comm_ID" " "1", "User_ID": "1", "channel_ID: "1",
+￼
+
+
+
+Create Channel :- Screen 8	
+	-----------Channels--------------
+	
+B- Channels Create:-  
+POST http://localhost:9002/api/user/community/{comm_ID}/channel
+	
+		{
+		    "Name": "Software",
+		}
+
+		
+D- Channels Update Data:-  
+PUT http://localhost:9002/api/user/community/{comm_ID}/channel/{ID}
+	
+		{
+		    "Name": "Software",
+		}
+		
+E- Channel Delete:- 
+DELETE http://localhost:9002/api/user/community/{comm_ID}/channel/{ID}
+	
+		
+Member For Channel :- Screen 9
+		-----------Add Member For channel--------------
+A- Channel GET Member:-
+GET http://localhost:9002/api/user/community/{comm_ID}/channel/{ch_ID}/members/
+		Respose{
+			"ID" : "1",
+			"User_ID" : "1",
+			"Community_ID" : "1",
+			"channel_ID" : "1"
+			"Role": "manager/community_user/guest_user",
+			"Status" : "active/Pending",
+		}
+
+B- Channel Add Member:-  
+POST http://localhost:9002/api/user/community/{comm_ID}/channel/{ch_ID}/member
+	
+		{
+			"user": [1,2,3]
+		}
+		
+E- Channel Delete Single Member:-  
+DELETE http://localhost:9002/api/user/community/{comm_ID}/channel/{ch_ID}/member/{ID}
+		
+		
+		
+		
+		
+
