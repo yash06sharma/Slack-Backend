@@ -16,10 +16,12 @@ return new class extends Migration
             $table->string('message');
             $table->unsignedBigInteger('created_by');
             $table->foreignId('created_by')->reference('id')->on('users');
-            $table->unsignedBigInteger('receiver_id');
+            $table->unsignedBigInteger('receiver_id')->nullable();
             $table->foreignId('receiver_id')->reference('id')->on('users');
-            $table->unsignedBigInteger('channel_id');
+            $table->unsignedBigInteger('channel_id')->nullable();
             $table->foreignId('channel_id')->reference('id')->on('channels');
+            $table->unsignedBigInteger('communitie_id');
+            $table->foreignId('communitie_id')->reference('id')->on('communities');
             $table->timestamps();
         });
     }

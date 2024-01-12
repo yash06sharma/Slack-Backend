@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Chat extends Model
 {
     use HasFactory;
+    protected $fillable = ['channel_id', 'receiver_id', 'message', 'created_by'];
+
+
     public function channel() {
         return $this->belongsTo(Channel::class, 'channel_id');
     }

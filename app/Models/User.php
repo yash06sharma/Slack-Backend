@@ -30,7 +30,6 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
-        'remember_token',
     ];
 
     /**
@@ -39,11 +38,11 @@ class User extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        // 'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
 
-    public function communities() {
+    public function community() {
         return $this->hasMany(Community::class, 'created_by');
     }
 
@@ -51,7 +50,7 @@ class User extends Authenticatable
         return $this->hasMany(CommunityMember::class, 'user_id');
     }
 
-    public function channels() {
+    public function channel() {
         return $this->hasMany(Channel::class, 'created_by');
     }
 
@@ -59,7 +58,7 @@ class User extends Authenticatable
         return $this->hasMany(ChannelMember::class, 'user_id');
     }
 
-    public function chats() {
+    public function chat() {
         return $this->hasMany(Chat::class, 'created_by');
     }
 

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('community_members', function (Blueprint $table) {
             $table->id();
             $table->string('role');
-            $table->string('status');
+            $table->enum('status', ['Pending', 'Active']);
             $table->unsignedBigInteger('user_id');
             $table->foreignId('user_id')->reference('id')->on('users');
             $table->unsignedBigInteger('communitie_id');

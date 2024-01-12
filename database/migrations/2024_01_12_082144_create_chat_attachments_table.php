@@ -16,11 +16,11 @@ return new class extends Migration
             $table->string('name');
             $table->string('path');
             $table->string('type');
-            $table->unsignedBigInteger('chat_id');
+            $table->unsignedBigInteger('chat_id')->nullable();
             $table->foreignId('chat_id')->reference('id')->on('chats');
             $table->unsignedBigInteger('created_by');
             $table->foreignId('created_by')->reference('id')->on('users');
-            $table->unsignedBigInteger('chat_thread_id');
+            $table->unsignedBigInteger('chat_thread_id')->nullable();
             $table->foreignId('chat_thread_id')->reference('id')->on('chat_threads');
             $table->timestamps();
         });

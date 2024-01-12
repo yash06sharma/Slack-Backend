@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Channel extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['comunity_id', 'name', 'created_by'];
+
+
     public function community() {
         return $this->belongsTo(Community::class, 'comunity_id');
     }
@@ -20,7 +24,7 @@ class Channel extends Model
         return $this->hasMany(ChannelMember::class, 'channel_id');
     }
 
-    public function chats() {
+    public function chat() {
         return $this->hasMany(Chat::class, 'channel_id');
     }
 }
