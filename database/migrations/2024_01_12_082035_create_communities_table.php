@@ -12,12 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('communities', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->text('description');
-            $table->unsignedBigInteger('created_by');
-            $table->foreignId('created_by')->references('id')->on('users');
-            $table->timestamps();
+        //  $table->id();
+        // $table->string('name');
+        // $table->text('description');
+        // $table->unsignedBigInteger('created_by')->index(); // Define the column and create an index
+        // $table->foreign('created_by')->references('id')->on('users');
+        // $table->timestamps();
+        $table->id();
+        $table->string('name');
+        $table->text('description');
+        $table->unsignedBigInteger('created_by')->index(); // Define the column and create an index
+        $table->foreign('created_by')->references('id')->on('users');
+        $table->timestamps();
         });
     }
 

@@ -12,11 +12,11 @@ class Community extends Model
     protected $fillable = ['name', 'description', 'created_by'];
 
     public function members() {
-        return $this->hasMany(CommunityMember::class, 'comunity_id');
+        return $this->hasMany(CommunityMember::class, 'communitie_id');
     }
 
     public function channel() {
-        return $this->hasMany(Channel::class, 'comunity_id');
+        return $this->hasMany(Channel::class, 'communitie_id');
     }
 
       public function creator() {

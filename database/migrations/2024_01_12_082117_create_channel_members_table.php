@@ -12,11 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('channel_members', function (Blueprint $table) {
+            // $table->id();
+            // $table->unsignedBigInteger('user_id');
+            // $table->foreignId('user_id')->reference('id')->on('users');
+            // $table->unsignedBigInteger('channel_id');
+            // $table->foreignId('channel_id')->reference('id')->on('channels');
+            // $table->timestamps();
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->foreignId('user_id')->reference('id')->on('users');
-            $table->unsignedBigInteger('channel_id');
-            $table->foreignId('channel_id')->reference('id')->on('channels');
+            $table->unsignedBigInteger('user_id')->index(); // Define the column and create an index
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->unsignedBigInteger('channel_id')->index(); // Define the column and create an index
+            $table->foreign('channel_id')->references('id')->on('channels');
             $table->timestamps();
         });
     }

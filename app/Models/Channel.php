@@ -9,11 +9,11 @@ class Channel extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['comunity_id', 'name', 'created_by'];
+    protected $fillable = ['communitie_id', 'name', 'created_by'];
 
 
     public function community() {
-        return $this->belongsTo(Community::class, 'comunity_id');
+        return $this->belongsTo(Community::class, 'communitie_id');
     }
 
     public function creator() {

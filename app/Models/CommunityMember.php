@@ -13,7 +13,7 @@ class CommunityMember extends Model
 
 
     public function community() {
-        return $this->belongsTo(Community::class, 'comunity_id');
+        return $this->belongsTo(Community::class, 'communitie_id');
     }
      public function users() {
         return $this->belongsTo(User::class, 'user_id');
