@@ -29,10 +29,25 @@ Route::post('addchannel/{id}', [DashboardController::class, 'addChannel']);
 Route::post('addcommunity/{id}', [DashboardController::class, 'addCommunity']);
 
 
-Route::get('user/{user_id}/community/{comm_ID}/member', [DashboardController::class, 'getCommunityMember']);
 
 
 Route::get('community/{id?}', [DashboardController::class, 'showCommunity']);
+
+
+//------------get USer For FirstCommunity Creation----------
+
+Route::get('user/community_member/', [DashboardController::class, 'get_FrstCommunity_Created_Member']);
+
+
+
+
+Route::get('user/{user_id}/community/{comm_ID}/', [DashboardController::class, 'getCommunityMember']);
+
+//-------------USer Notification-------------
+
+Route::post('user/notification/', [DashboardController::class, 'notification']);
+
+Route::get('user/{user_id}/community/{comm_ID}/channel/{ch_ID}', [DashboardController::class, 'Notifications_User']);
 
 
 

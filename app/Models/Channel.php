@@ -20,7 +20,7 @@ class Channel extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function members() {
+    public function ch_members() {
         return $this->hasMany(ChannelMember::class, 'channel_id');
     }
 

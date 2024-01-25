@@ -10,6 +10,8 @@ use App\Models\Channel;
 use App\Models\CommunityMember;
 use App\Models\ChannelMember;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\Notify_Community_Member;
+use Illuminate\Support\Facades\Notification;
 
 class DashboardController extends Controller
 {
@@ -47,10 +49,12 @@ class DashboardController extends Controller
 
 
 foreach ($communityData as $community) {
+
     $communityItem = [
         'id' => $community->id,
         'Name' => $community->name,
         'Description' => $community->description,
+        'Created_by' => User::where('id', $community->created_by)->value('name'),
         'CommunityMembers' => [],
         'Channels' => [],
     ];
@@ -81,19 +85,21 @@ foreach ($communityData as $community) {
             'Members' => [],
         ];
 
-        foreach ($channel->members as $member) {
-            $ChannelmemberItem = [
-                'user_ID' => $member->user_id,
-            ];
-            if($commMember->user_id){
-                $flights = User::where('id', $member->user_id)->get();
-                foreach($flights as $userData){
-                    $ChannelmemberItem['Name'] = $userData->name;
-                }
-            }
-        }
 
-        $channelItem['Members'][] = $ChannelmemberItem;
+            foreach ($channel->members as $member) {
+                $ChannelmemberItem = [
+                    'user_ID' => $member->user_id,
+                ];
+
+                if($member->user_id){
+                    $flights = User::where('id', $member->user_id)->get();
+                    foreach($flights as $userData){
+                        $ChannelmemberItem['Name'] = $userData->name;
+                    }
+                }
+                $channelItem['Members'][] = $ChannelmemberItem;
+            }
+
         $communityItem['Channels'][] = $channelItem;
     }
 
@@ -103,7 +109,7 @@ foreach ($communityData as $community) {
 
 
         }else{
-
+                //---------------Add session value of created by (Admin)
             $data = User::where('id',1)->
             with(['community', 'community.members', 'community.channel','community.channel.members'])
             ->get();
@@ -166,7 +172,7 @@ foreach ($communityData as $community) {
         // ],201);
     }
 
-            /**
+            /**z
      * AddCommunity is register the community by User.
      */
     public function addChannel(Request $request,$id)
@@ -189,6 +195,7 @@ foreach ($communityData as $community) {
     // getCommunityMember
       /**
      * Show Community Detail is register the community by User.
+     * this funtion use to add member in community and add memnber in chanel based on condition.
      */
     public function getCommunityMember($user_id,$comm_ID)
     {
@@ -227,8 +234,113 @@ foreach ($communityData as $community) {
     }
 
 
+
+      /**
+     * Show Community Detail is register the community by User.
+     * this funtion use to add member in community and add memnber in chanel based on condition.
+     */
+    public function get_FrstCommunity_Created_Member()
+    {
+
+        $id = [1];
+        $data = User::select("id",'name','email')
+        ->whereNotIn('id', $id)
+        ->take(10)
+        ->get();
+
+        return response([
+            'Data' => $data,
+            // 'selected' => $flights,
+        ], 200);
+    }
+
+//-------------------Notification---------------
+
+
+    public function notification(Request $request)
+    {
+
+        $users = $request->all();
+
+        $userActiveArray = [];
+
+    foreach ($users as $user) {
+        $userActive = [
+            'From' => $user['created_by'],
+            'Community_Name' => $user['community_Name'],
+            'Community_ID' => $user['community_ID'],
+            'channel_Name' => $user['channel_Name'],
+            'channel_ID' => $user['channel_ID'],
+            'email' => $user['email'],
+            'id' => $user['id'],
+            'Role' => $user['role'],
+            'showText' => 'We invite you to join us.',
+        ];
+
+        $userActiveArray[] = $userActive;
+
+
+        Notification::route('mail', $user['email'])
+        ->notify(new Notify_Community_Member($userActive));
+
+        $community = Community::find($user['community_ID']);
+
+        if ($community) {
+            $community_member = new CommunityMember();
+            $community_member->role = $user['role'];
+            $community_member->user_id = $user['id'];
+            $community_member->status = 'Pending';
+            $community->members()->save($community_member);
+        }
+
+    }
+
+
+
+        return response([
+            'Data' => $userActiveArray,
+        ], 200);
+    }
+
+
+
+    public function Notifications_User($user_id,$comm_ID, $ch_ID){
+
+        $userIds = []; // Initialize an empty array to store user_ids
+        $auth = [];
+
+        $users = CommunityMember::select("status")->where('user_id', $user_id)
+        ->where('communitie_id', $comm_ID)
+        ->get();
+
+
+
+        foreach ($users as $users) {
+            if ($users->status == 'Active') {
+                $channel_Members = Channel::find($ch_ID)->ch_members()->get();
+
+        }
+        }
+
+
+
+
+
+        return response([
+            'User_ID' => $users,
+            // 'Community_ID' => $users->status,
+            'Channel_ID' => $channel_Members,
+
+        ], 200);
+    }
+
+
 }
 
 
 
 
+
+
+
+        //-----------End Trial-----------
