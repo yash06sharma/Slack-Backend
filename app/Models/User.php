@@ -45,8 +45,8 @@ class User extends Authenticatable
     public function community() {
         return $this->hasMany(Community::class, 'created_by');
     }
-
-    public function communityMembers() {
+//---------------------------communityMembers-------
+    public function Members() {
         return $this->hasMany(CommunityMember::class, 'user_id');
     }
 

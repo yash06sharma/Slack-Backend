@@ -12,6 +12,8 @@ use App\Models\ChannelMember;
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\Notify_Community_Member;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Session;
+
 
 class DashboardController extends Controller
 {
@@ -36,9 +38,10 @@ class DashboardController extends Controller
        /**
      * Show Community Detail is register the community by User.
      */
-    public function showCommunity($id = null)
+    public function showCommunity($comm_ID, $id = null)
     {
         $communitiesData = [];
+
 
         if($id != null){
 
@@ -110,7 +113,7 @@ foreach ($communityData as $community) {
 
         }else{
                 //---------------Add session value of created by (Admin)
-            $data = User::where('id',1)->
+            $data = User::where('id',$comm_ID)->
             with(['community', 'community.members', 'community.channel','community.channel.members'])
             ->get();
 
@@ -133,7 +136,7 @@ foreach ($communityData as $community) {
 
       return response([
             'community' => $communitiesData,
-
+            'ID of USer' => $comm_ID,
         ],201);
 
 
@@ -186,9 +189,35 @@ foreach ($communityData as $community) {
 
          return response([
             'Data' => $channel,
-            'submit'=> 'Data aata he'
+            'submit'=> 'Channel Created'
         ],201);
     }
+
+
+
+    public function Channel_Add_Member(Request $request)
+    {
+
+        $users = $request->all();
+        $userActiveArray = [];
+    foreach ($users as $user) {
+        $userActive = [
+            'id' => $user['user_id'],
+            'channel_ID'=> $user['channel_id'],
+
+        ];
+
+        $Channel = Channel::find($user['channel_id']);
+        $channel_Member = new ChannelMember();
+        $channel_Member->user_id = $user['user_id'];
+        $Channel->members()->save($channel_Member);
+    }
+         return response([
+            'Data' => $request->all(),
+            'submit'=> 'Channel Created'
+        ],201);
+    }
+
 
 
 
@@ -239,10 +268,10 @@ foreach ($communityData as $community) {
      * Show Community Detail is register the community by User.
      * this funtion use to add member in community and add memnber in chanel based on condition.
      */
-    public function get_FrstCommunity_Created_Member()
+    public function get_FrstCommunity_Created_Member($id)
     {
 
-        $id = [1];
+        $id = [$id];
         $data = User::select("id",'name','email')
         ->whereNotIn('id', $id)
         ->take(10)
@@ -259,11 +288,8 @@ foreach ($communityData as $community) {
 
     public function notification(Request $request)
     {
-
         $users = $request->all();
-
         $userActiveArray = [];
-
     foreach ($users as $user) {
         $userActive = [
             'From' => $user['created_by'],
@@ -272,31 +298,22 @@ foreach ($communityData as $community) {
             'channel_Name' => $user['channel_Name'],
             'channel_ID' => $user['channel_ID'],
             'email' => $user['email'],
-            'id' => $user['id'],
+            'id' => $user['user_id'],
             'Role' => $user['role'],
             'showText' => 'We invite you to join us.',
         ];
-
         $userActiveArray[] = $userActive;
-
-
         Notification::route('mail', $user['email'])
         ->notify(new Notify_Community_Member($userActive));
-
         $community = Community::find($user['community_ID']);
-
         if ($community) {
             $community_member = new CommunityMember();
             $community_member->role = $user['role'];
-            $community_member->user_id = $user['id'];
+            $community_member->user_id = $user['user_id'];
             $community_member->status = 'Pending';
             $community->members()->save($community_member);
         }
-
     }
-
-
-
         return response([
             'Data' => $userActiveArray,
         ], 200);
@@ -317,7 +334,7 @@ foreach ($communityData as $community) {
 
         foreach ($users as $users) {
             if ($users->status == 'Active') {
-                $channel_Members = Channel::find($ch_ID)->ch_members()->get();
+                $channel_Members = Channel::find($ch_ID)->members()->get();
 
         }
         }

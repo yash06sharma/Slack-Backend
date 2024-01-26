@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 // use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
 {
@@ -54,13 +55,17 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
             $data = $request->user()->createToken($request->email)->plainTextToken;
+
               return response([
             'Token' => $data,
             'credentials'=> $user,
+
         ],201);
+
         } else {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
+
     }
 
     /**

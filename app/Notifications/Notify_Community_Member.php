@@ -35,7 +35,6 @@ class Notify_Community_Member extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        // $url = url('/user/'.$this->User_Notify['id']);
         return (new MailMessage)
         ->subject('User Status')
         ->from('tutuapp.center.dmn@gmail.com', 'Yash')
@@ -45,9 +44,6 @@ class Notify_Community_Member extends Notification
         ->line($this->User_Notify['showText'])
         ->line('click the below link for approval!')
         // ->action('Approve', url('/user', $this->User_Notify['id'],'/community',$this->User_Notify['Community_ID'],'/channel',$this->User_Notify['channel_ID']))
-                // ->action('Approve', url('/user'))
-                // ->action('View Invoice', $url)
-
         ->line('Best regards!')
         ->line("From: ".$this->User_Notify['From']);
     }
